@@ -9,4 +9,6 @@ set(CMAKE_CXX_STANDARD 20)
 #set(CMAKE_CXX_FLAGS "-O3 -ffast-math -march=native")
 
 #Executable
+find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 add_executable(Electronics ${SOURCES})
+target_link_libraries(Electronics sfml-graphics sfml-audio)
