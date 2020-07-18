@@ -15,15 +15,6 @@ namespace luaVM {
 	void initLuaVM() {
 		L = luaL_newstate();
 		luaL_openlibs(L);
-
-		/*int n = 5;
-		lua_pushinteger(L, n);
-		lua_setglobal(L, "n");
-
-		if (checkVM(L, luaL_dofile(L, "test.lua"))) {
-			lua_getglobal(L, "n");
-			std::cout << (float)lua_tonumber(L, -1) << '\n';
-		}*/
 	}
 
 	std::array<std::string, 16> global_names = {
@@ -68,7 +59,7 @@ namespace luaVM {
 		lua_pushinteger(L, 255);
 		lua_setglobal(L, "LocalBlue");
 
-		luaL_dofile(L, t.lua_path.c_str()));
+		luaL_dofile(L, t.lua_path.c_str());
 
 		lua_getglobal(L, "LocalHeat");
 		t.new_heat = lua_tonumber(L, -1);
