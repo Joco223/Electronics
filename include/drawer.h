@@ -8,13 +8,13 @@
 #include "tile.h"
 
 namespace drawer {
-	void init_drawer();
+	void initDrawer();
 
-	void drawPlayingField(const playingField& playing_field);
-	void drawPlayingFieldDebug(sf::RenderWindow& window, sf::View& camera, playingField& playing_field, const int window_width, const int window_height);
+	void drawPlayingField(sf::RenderWindow& window, sf::View& camera, playingField& playing_field, const int window_width, const int window_height, const float scale);
+	void drawPlayingFieldDebug(sf::RenderWindow& window, sf::View& camera, playingField& playing_field, const int window_width, const int window_height, const float scale);
 
-	void drawChunk(sf::RenderWindow& window, sf::View& camera, chunk& chunk, const int widnow_width, const int window_height);
-	void drawChunkDebug(sf::RenderWindow& window, sf::View& camera, chunk& chunk, const int window_width, const int window_height);
+	void drawChunk(sf::RenderWindow& window, chunk& chunk, const int window_width, const int window_height);
+	void drawChunkDebug(sf::RenderWindow& window, chunk& chunk, const int window_width, const int window_height);
 
-	void drawTile();
+	void drawTile(sf::RenderWindow& window, tile& t, chunk* c, const int window_width, const int window_height);
 }
