@@ -9,6 +9,9 @@ extern "C" {
 #include <string>
 #include <iostream>
 #include <array>
+#include <vector>
+#include <fstream>
+#include <sstream>
 
 #include "tile.h"
 

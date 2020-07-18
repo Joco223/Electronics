@@ -11,6 +11,7 @@ public:
 	std::string lua_path;
 	int type, heat, state;
 	int new_type, new_heat, new_state, pos_x, pos_y;
+	int lua_index;
 
 	tile();
 	tile(const int type_, const int pos_x_, const int pos_y_);

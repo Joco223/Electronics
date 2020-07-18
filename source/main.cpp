@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <chrono>
 
 #include "input_handler.h"
 #include "playing_field.h"
@@ -18,12 +19,15 @@ int main(int argc, char** argv) {
 	float scale = 1.0f;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "Electronics");
-	window.setFramerateLimit(5);
+	//window.setFramerateLimit(60);
 	sf::View camera = window.getDefaultView();
 
 	bool keyWasUpdated = false;
 
 	drawer::initDrawer();
+
+	auto start = std::chrono::high_resolution_clock::now();
+	int frameCounter = 0;
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -53,6 +57,16 @@ int main(int argc, char** argv) {
 		//drawer::drawPlayingFieldDebug(window, camera, playing_field, width, height, scale);
 
 		window.display();
+
+		if (frameCounter == 100) {
+			auto end = std::chrono::high_resolution_clock::now();
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+			start = std::chrono::high_resolution_clock::now();
+			std::cout << "One frame on average took took: " << (duration.count()/100.0) << "ms.\n";
+			frameCounter = 0;
+		}else{
+			frameCounter++;
+		}	
 	}
 
 	luaVM::deInitVM();
