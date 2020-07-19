@@ -41,68 +41,74 @@ enum sides {
 	bottomRight
 };
 
-std::array<chunk*, 8> sChunks = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+void playingField::generateSChunksCached() {
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			std::array<chunk*, 8> sChunks = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+
+			if (y == 0) {
+				if (x == 0) {
+					sChunks[right]       = &chunks[(x + 1) + y * width];
+					sChunks[bottomRight] = &chunks[(x + 1) + (y + 1) * width];
+				}else if (x == width - 1) {
+					sChunks[left]       = &chunks[(x - 1) + y * width];
+					sChunks[bottomLeft] = &chunks[(x - 1) + (y + 1) * width];
+				}else{
+					sChunks[left]        = &chunks[(x - 1) + y * width];
+					sChunks[bottomLeft]  = &chunks[(x - 1) + (y + 1) * width];
+					sChunks[right]       = &chunks[(x + 1) + y * width];
+					sChunks[bottomRight] = &chunks[(x + 1) + (y + 1) * width];
+				}
+				sChunks[bottom] = &chunks[x + (y + 1) * width];
+			}else if (y == height - 1) {
+				if (x == 0) {
+					sChunks[topRight] = &chunks[(x + 1) + (y - 1) * width];
+					sChunks[right]    = &chunks[(x + 1) + y * width];
+				}else if (x == width -1) {
+					sChunks[topLeft] = &chunks[(x - 1) + (y - 1) * width];
+					sChunks[left]    = &chunks[(x - 1) + y * width];
+				}else{
+					sChunks[left]     = &chunks[(x - 1) + y * width];
+					sChunks[topLeft]  = &chunks[(x - 1) + (y - 1) * width];
+					sChunks[topRight] = &chunks[(x + 1) + (y - 1) * width];
+					sChunks[right]    = &chunks[(x + 1) + y * width];
+				}
+				sChunks[top] = &chunks[x + (y - 1) * width];
+			}else{
+				if (x == 0) {
+					sChunks[top]         = &chunks[x + (y - 1) * width];
+					sChunks[topRight]    = &chunks[(x + 1) + (y - 1) * width];
+					sChunks[right]       = &chunks[(x + 1) + y * width];
+					sChunks[bottomRight] = &chunks[(x + 1) + (y + 1) * width];
+					sChunks[bottom]      = &chunks[x + (y + 1) * width];
+				}else if (x == width - 1) {
+					sChunks[left]        = &chunks[(x - 1) + y * width];
+					sChunks[topLeft]     = &chunks[(x - 1) + (y - 1) * width];
+					sChunks[top]         = &chunks[x + (y - 1) * width];
+					sChunks[bottom]      = &chunks[x + (y + 1) * width];
+					sChunks[bottomLeft]  = &chunks[(x - 1) + (y + 1) * width];
+				}else{
+					sChunks[left]        = &chunks[(x - 1) + y * width];
+					sChunks[topLeft]     = &chunks[(x - 1) + (y - 1) * width];
+					sChunks[top]         = &chunks[x + (y - 1) * width];
+					sChunks[topRight]    = &chunks[(x + 1) + (y - 1) * width];
+					sChunks[right]       = &chunks[(x + 1) + y * width];
+					sChunks[bottomRight] = &chunks[(x + 1) + (y + 1) * width];
+					sChunks[bottom]      = &chunks[x + (y + 1) * width];
+					sChunks[bottomLeft]  = &chunks[(x - 1) + (y + 1) * width];
+				}
+			}
+
+			sChunksCached.push_back(sChunks);
+			chunks[x + y * width].generateSTilesCached(sChunks);
+		}
+	}
+}
 
 void playingField::updateChunks() {
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			if (chunks.size() > 1) {
-				sChunks = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
-				if (y == 0) {
-					if (x == 0) {
-						sChunks[right]       = &chunks[(x + 1) + y * width];
-						sChunks[bottomRight] = &chunks[(x + 1) + (y + 1) * width];
-					}else if (x == width - 1) {
-						sChunks[left]       = &chunks[(x - 1) + y * width];
-						sChunks[bottomLeft] = &chunks[(x - 1) + (y + 1) * width];
-					}else{
-						sChunks[left]        = &chunks[(x - 1) + y * width];
-						sChunks[bottomLeft]  = &chunks[(x - 1) + (y + 1) * width];
-						sChunks[right]       = &chunks[(x + 1) + y * width];
-						sChunks[bottomRight] = &chunks[(x + 1) + (y + 1) * width];
-					}
-					sChunks[bottom] = &chunks[x + (y + 1) * width];
-				}else if (y == height - 1) {
-					if (x == 0) {
-						sChunks[topRight] = &chunks[(x + 1) + (y - 1) * width];
-						sChunks[right]    = &chunks[(x + 1) + y * width];
-					}else if (x == width -1) {
-						sChunks[topLeft] = &chunks[(x - 1) + (y - 1) * width];
-						sChunks[left]    = &chunks[(x - 1) + y * width];
-					}else{
-						sChunks[left]     = &chunks[(x - 1) + y * width];
-						sChunks[topLeft]  = &chunks[(x - 1) + (y - 1) * width];
-						sChunks[topRight] = &chunks[(x + 1) + (y - 1) * width];
-						sChunks[right]    = &chunks[(x + 1) + y * width];
-					}
-					sChunks[top] = &chunks[x + (y - 1) * width];
-				}else{
-					if (x == 0) {
-						sChunks[top]         = &chunks[x + (y - 1) * width];
-						sChunks[topRight]    = &chunks[(x + 1) + (y - 1) * width];
-						sChunks[right]       = &chunks[(x + 1) + y * width];
-						sChunks[bottomRight] = &chunks[(x + 1) + (y + 1) * width];
-						sChunks[bottom]      = &chunks[x + (y + 1) * width];
-					}else if (x == width - 1) {
-						sChunks[left]        = &chunks[(x - 1) + y * width];
-						sChunks[topLeft]     = &chunks[(x - 1) + (y - 1) * width];
-						sChunks[top]         = &chunks[x + (y - 1) * width];
-						sChunks[bottom]      = &chunks[x + (y + 1) * width];
-						sChunks[bottomLeft]  = &chunks[(x - 1) + (y + 1) * width];
-					}else{
-						sChunks[left]        = &chunks[(x - 1) + y * width];
-						sChunks[topLeft]     = &chunks[(x - 1) + (y - 1) * width];
-						sChunks[top]         = &chunks[x + (y - 1) * width];
-						sChunks[topRight]    = &chunks[(x + 1) + (y - 1) * width];
-						sChunks[right]       = &chunks[(x + 1) + y * width];
-						sChunks[bottomRight] = &chunks[(x + 1) + (y + 1) * width];
-						sChunks[bottom]      = &chunks[x + (y + 1) * width];
-						sChunks[bottomLeft]  = &chunks[(x - 1) + (y + 1) * width];
-					}
-				}
-			}
-
-			chunks[x + y * width].updateTiles(sChunks);
+			chunks[x + y * width].updateTiles(sChunksCached[x + y * width]);
 		}
 	}
 

@@ -11,6 +11,7 @@
 class playingField {
 private:
 	std::vector<chunk> chunks;
+	std::vector<std::array<chunk*, 8>> sChunksCached;
 	int width, height;
 public:
 	playingField() : width(0), height(0) {};
@@ -18,5 +19,6 @@ public:
 	void loadPlayingField(const std::string& file_path);
 	void generateChunksSquare(const int width_, const int height_, const int chunk_size);
 	std::vector<chunk*> getVisibleChunks(sf::View& camera, const int window_width, const int window_height, const float scale);
+	void generateSChunksCached();
 	void updateChunks();
 };

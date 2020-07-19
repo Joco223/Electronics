@@ -11,11 +11,9 @@ constexpr int width = 1280;
 constexpr int height = 720;
 
 int main(int argc, char** argv) {
-
-	luaVM::initLuaVM();
-
 	playingField playing_field;
 	playing_field.generateChunksSquare(4, 4, 8);
+	playing_field.generateSChunksCached();
 	float scale = 1.0f;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "Electronics");
@@ -28,6 +26,8 @@ int main(int argc, char** argv) {
 
 	auto start = std::chrono::high_resolution_clock::now();
 	int frameCounter = 0;
+
+	luaVM::initVM();
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -62,14 +62,12 @@ int main(int argc, char** argv) {
 			auto end = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 			start = std::chrono::high_resolution_clock::now();
-			std::cout << "One frame on average took took: " << (duration.count()/100.0) << "ms.\n";
+			std::cout << round(1000.0/(duration.count()/100.0)) << " FPS on average.\n";
 			frameCounter = 0;
 		}else{
 			frameCounter++;
 		}	
 	}
-
-	luaVM::deInitVM();
 
 	return 0;
 }

@@ -1,7 +1,31 @@
 #include "lua_vm.h"
 
 namespace luaVM {
-	lua_State* L = nullptr;
+	sol::state L;
+	sol::table states;
+	sol::table heats;
+
+	void initVM() {
+		L.open_libraries(sol::lib::base);
+
+		states = L.create_table_with("TopLeft", 0, 
+																 "Top", 0,
+																 "TopRight", 0,
+															   "Left", 0,
+																 "Right", 0,
+																 "BottomLeft", 0,
+																 "Bottom", 0,
+																 "BottomRight", 0);
+
+		heats = L.create_table_with("TopLeft", 0, 
+																"Top", 0,
+																"TopRight", 0,
+																"Left", 0,
+																"Right", 0,
+																"BottomLeft", 0,
+																"Bottom", 0,
+																"BottomRight", 0);
+	}
 
 	std::vector<std::string> loadedFiles;
 	std::vector<std::string> loadedFileNames;
@@ -19,20 +43,6 @@ namespace luaVM {
 		}
 	}
 
-	bool checkVM(lua_State* L, int r) {
-		if (r != LUA_OK) {
-			std::string error_msg = lua_tostring(L, -1);
-			std::cerr << error_msg << '\n';
-			return false;
-		}
-		return true;
-	}
-
-	void initLuaVM() {
-		L = luaL_newstate();
-		luaL_openlibs(L);
-	}
-
 	int findIndex(const std::string& path) {
 		int index = -1;
 		for (int i = 0; i < loadedFileNames.size(); i++) {
@@ -43,6 +53,19 @@ namespace luaVM {
 		}
 		return index;
 	}
+
+	void loadArguments(std::array<tile*, 8>& sTiles) {
+		if (sTiles[0] != nullptr) { states["TopLeft"]     = sTiles[0]->state; heats["TopLeft"]     = sTiles[0]->heat; } else { states["TopLeft"]     = 0; heats["TopLeft"]     = 0; }
+		if (sTiles[1] != nullptr) { states["Top"]         = sTiles[1]->state; heats["Top"]         = sTiles[1]->heat; } else { states["Top"]         = 0; heats["Top"]         = 0; }
+		if (sTiles[2] != nullptr) { states["TopRight"]    = sTiles[2]->state; heats["TopRight"]    = sTiles[2]->heat; } else { states["TopRight"]    = 0; heats["TopRight"]    = 0; }
+		if (sTiles[3] != nullptr) { states["Left"]        = sTiles[3]->state; heats["Left"]        = sTiles[3]->heat; } else { states["Left"]        = 0; heats["Left"]        = 0; }
+		if (sTiles[4] != nullptr) { states["Right"]       = sTiles[4]->state; heats["Right"]       = sTiles[4]->heat; } else { states["Right"]       = 0; heats["Right"]       = 0; }
+		if (sTiles[5] != nullptr) { states["BottomLeft"]  = sTiles[5]->state; heats["BottomLeft"]  = sTiles[5]->heat; } else { states["BottomLeft"]  = 0; heats["BottomLeft"]  = 0; }
+		if (sTiles[6] != nullptr) { states["Bottom"]      = sTiles[6]->state; heats["Bottom"]      = sTiles[6]->heat; } else { states["Bottom"]      = 0; heats["Bottom"]      = 0; }
+		if (sTiles[7] != nullptr) { states["BottomRight"] = sTiles[7]->state; heats["BottomRight"] = sTiles[7]->heat; } else { states["BottomRight"] = 0; heats["BottomRight"] = 0; }
+	}
+
+	std::vector<int> arguments(16);
 
 	void updateTile(tile& t, std::array<tile*, 8>& sTiles) {
 		if (t.lua_index == -1) {
@@ -57,37 +80,8 @@ namespace luaVM {
 			}			
 		}
 
-		luaL_dostring(L, loadedFiles[t.lua_index].c_str());
-		lua_getglobal(L, "Run");
-
-		if (lua_isfunction(L, -1)) {
-			for (int i = 0; i < 8; i++) {
-				if (sTiles[i] != nullptr) {
-					lua_pushnumber(L, sTiles[i]->state);
-					lua_pushnumber(L, sTiles[i]->heat);
-				}else{
-					lua_pushnumber(L, 0);
-					lua_pushnumber(L, 0);
-				}
-			}
-
-			lua_pushnumber(L, t.state);
-			lua_pushnumber(L, t.heat);
-			lua_pushnumber(L, 255);
-			lua_pushnumber(L, 255);
-			lua_pushnumber(L, 255);
-
-			checkVM(L, lua_pcall(L, 21, 5, 0));
-			t.new_state = lua_tointeger(L, -1);
-			t.new_heat  = lua_tointeger(L, -2);
-			t.color.r   = (int)lua_tointeger(L, -3);
-			t.color.g   = (int)lua_tointeger(L, -4);
-			t.color.b   = (int)lua_tointeger(L, -5);
-			lua_pop(L, 5);
-		}
-	}
-
-	void deInitVM() {
-		lua_close(L);
+		L.script(loadedFiles[t.lua_index]);
+		loadArguments(sTiles);
+		sol::tie(t.new_state, t.new_heat, t.color.r, t.color.g, t.color.b) = L["Run"](states, heats, t.state, t.heat, t.color.r, t.color.g, t.color.b);
 	}
 }

@@ -1,10 +1,6 @@
 #pragma once
 
-extern "C" {
-#include "lua5.3/lua.h"
-#include "lua5.3/lauxlib.h"
-#include "lua5.3/lualib.h"
-}
+#include "sol.hpp"
 
 #include <string>
 #include <iostream>
@@ -16,8 +12,6 @@ extern "C" {
 #include "tile.h"
 
 namespace luaVM {
-	bool checkVM(lua_State* L, int r);
-	void initLuaVM();
+	void initVM();
 	void updateTile(tile& t, std::array<tile*, 8>& sTiles);
-	void deInitVM();
 }

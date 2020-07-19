@@ -28,12 +28,10 @@ enum sides {
 	bottomRight
 };
 
-std::array<tile*, 8> sTiles = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
-
-void chunk::updateTiles(std::array<chunk*, 8>& sChunks) {
+void chunk::generateSTilesCached(std::array<chunk*, 8>& sChunks) {
 	for (int y = 0; y < size; y++) {
 		for (int x = 0; x < size; x++) {
-			sTiles = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+			std::array<tile*, 8> sTiles = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 			if (y == 0) {
 				if (x == 0) {
@@ -120,7 +118,15 @@ void chunk::updateTiles(std::array<chunk*, 8>& sChunks) {
 				}
 			}
 
-			luaVM::updateTile(tiles[x + y * size], sTiles);
+			sTilesCached.push_back(sTiles);
+		}
+	}
+}
+
+void chunk::updateTiles(std::array<chunk*, 8>& sChunks) {
+	for (int y = 0; y < size; y++) {
+		for (int x = 0; x < size; x++) {
+			luaVM::updateTile(tiles[x + y * size], sTilesCached[x + y * size]);
 		}
 	}
 }
