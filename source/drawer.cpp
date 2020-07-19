@@ -14,7 +14,7 @@ namespace drawer {
 		chunkRect.setFillColor(sf::Color(20, 20, 20, 255));
 
 		chunkDebugRect.setOutlineThickness(-2);
-		chunkDebugRect.setOutlineColor(sf::Color(20, 20, 20, 255));
+		chunkDebugRect.setOutlineColor(sf::Color(255, 0, 0, 255));
 		chunkDebugRect.setFillColor(sf::Color(0, 0, 0, 0));
 	}
 
@@ -73,7 +73,7 @@ namespace drawer {
 
 	void drawTile(sf::RenderWindow& window, tile& t, chunk* c, const int window_width, const int window_height) {
 		sf::Vector2f position(c->pos_x*c->screen_size + t.pos_x*tile_pixel_size + window_width/2,
-												c->pos_y*c->screen_size + t.pos_y*tile_pixel_size + window_height/2);
+													c->pos_y*c->screen_size + t.pos_y*tile_pixel_size + window_height/2);
 
 		tileRect.setFillColor(t.color);
 		tileRect.setPosition(position);

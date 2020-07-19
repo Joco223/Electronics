@@ -8,9 +8,7 @@ chunk::chunk(const int pos_x_, const int pos_y_, const int size_)
 			  for (int y = 0; y < size; y++) {
 				  for (int x = 0; x < size; x++) {
 					  tile tmp(0, x, y);
-					  tmp.setLuaPath("GOL.lua");
-
-						if (x % 2 == 0) tmp.state = 1;
+					  //tmp.setLuaPath("test.lua");
 
 					  tiles.emplace_back(tmp);
 				  }
@@ -35,7 +33,7 @@ void chunk::generateSTilesCached(std::array<chunk*, 8>& sChunks) {
 
 			if (y == 0) {
 				if (x == 0) {
-					if (sChunks[topLeft] != nullptr) sTiles[topLeft]    = &sChunks[top]->tiles[(size - 1) + (size - 1) * size];  //Top left tile		
+					if (sChunks[topLeft] != nullptr) sTiles[topLeft]    = &sChunks[topLeft]->tiles[(size - 1) + (size - 1) * size];  //Top left tile		
 					if (sChunks[left]    != nullptr)  {
 						sTiles[left]       = &sChunks[left]->tiles[(size - 1) +          y * size]; //Left tile
 						sTiles[bottomLeft] = &sChunks[left]->tiles[(size - 1) + (   y + 1) * size]; //Bottom left tile
@@ -90,6 +88,10 @@ void chunk::generateSTilesCached(std::array<chunk*, 8>& sChunks) {
 					sTiles[left]    = &tiles[(x - 1) +       y * size];                                                //Left tile
 					sTiles[topRight] = &tiles[(x + 1) + (y - 1) * size];                                               //Top right tile
 					sTiles[right]    = &tiles[(x + 1) +       y * size];                                               //Right tile
+					if (sChunks[bottom] != nullptr) {
+						sTiles[bottomLeft] = &sChunks[bottom]->tiles[x - 1]; //Bottom left tile
+						sTiles[bottomRight] = &sChunks[bottom]->tiles[x + 1];
+					}
 				}
 				sTiles[top] = &tiles[x + (y - 1) * size];                                    //Top tile
 				if (sChunks[bottom] != nullptr) sTiles[bottom] = &sChunks[bottom]->tiles[x]; //Bottom tile
@@ -98,11 +100,21 @@ void chunk::generateSTilesCached(std::array<chunk*, 8>& sChunks) {
 					sTiles[top]         = &tiles[      x + (y - 1) * size]; //Top tile
 					sTiles[topRight]    = &tiles[(x + 1) + (y - 1) * size]; //Top right tile
 					sTiles[right]       = &tiles[(x + 1) +       y * size]; //Right tile
-					sTiles[bottom]      = &tiles[      x + (y + 1) * size]; //Bottom tile
 					sTiles[bottomRight] = &tiles[(x + 1) + (y + 1) * size]; //Bottom right tile
+					sTiles[bottom]      = &tiles[      x + (y + 1) * size]; //Bottom tile
+					if (sChunks[left] != nullptr) {
+						sTiles[topLeft]    = &sChunks[left]->tiles[(size - 1) + (y - 1) * size]; //Top left tile
+						sTiles[left]       = &sChunks[left]->tiles[(size - 1) + y * size];       //Left tile
+						sTiles[bottomLeft] = &sChunks[left]->tiles[(size - 1) + (y + 1) * size]; //Bottom left tile
+					}
 				}else if (x == size - 1) {
 					sTiles[topLeft]     = &tiles[(x - 1) + (y - 1) * size]; //Top left tile
 					sTiles[top]         = &tiles[      x + (y - 1) * size]; //Top tile
+					if (sChunks[right] != nullptr) {
+						sTiles[topRight]    = &sChunks[right]->tiles[(y - 1) * size]; //Top right tile
+						sTiles[right]       = &sChunks[right]->tiles[y * size];       //Right tile
+						sTiles[bottomRight] = &sChunks[right]->tiles[(y + 1) * size]; //Bottom right
+					}
 					sTiles[left]        = &tiles[(x - 1) +       y * size]; //Left tile
 					sTiles[bottomLeft]  = &tiles[(x - 1) + (y + 1) * size]; //Bottom left tile
 					sTiles[bottom]      = &tiles[      x + (y + 1) * size]; //Bottom tile

@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 	float scale = 1.0f;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "Electronics");
-	//window.setFramerateLimit(60);
+	window.setFramerateLimit(60);
 	sf::View camera = window.getDefaultView();
 
 	bool keyWasUpdated = false;
@@ -40,6 +40,8 @@ int main(int argc, char** argv) {
 			}else if (event.type == sf::Event::KeyReleased) {
 				inputHandler::checkReleasedKeys(event);
 				keyWasUpdated = true;
+			}else if (event.type == sf::Event::MouseButtonPressed) {
+				inputHandler::handleMouse(window, camera, event, &playing_field, width, height, scale);
 			}
 		}
 
