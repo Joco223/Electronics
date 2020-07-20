@@ -10,7 +10,7 @@
 namespace drawer {
 	void initDrawer();
 
-	void drawPlayingField(sf::RenderWindow& window, sf::View& camera, playingField& playing_field, const int window_width, const int window_height, const float scale);
+	void drawPlayingField(sf::RenderWindow& window, sf::View& camera, playingField& playing_field, const int window_width, const int window_height, const float scale, const bool drawGrid);
 	void drawPlayingFieldDebug(sf::RenderWindow& window, sf::View& camera, playingField& playing_field, const int window_width, const int window_height, const float scale);
 
 	void drawChunk(sf::RenderWindow& window, chunk& chunk, const int window_width, const int window_height);

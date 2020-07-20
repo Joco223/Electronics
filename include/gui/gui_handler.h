@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "gui.h"
 #include "gui_container.h"
 
@@ -30,8 +32,8 @@ namespace guiHandler {
 		gui.getGuiContainer("Main bar")->registerElement("save" , "Save");
 		gui.getGuiContainer("Main bar")->registerElement("load" , "Load");
 		gui.getGuiContainer("Main bar")->registerElement("pause", "Pause");
-		gui.getGuiContainer("Main bar")->registerElement("quit" , "Quit");
 		gui.getGuiContainer("Main bar")->registerElement("grid" , "Grid");
+		gui.getGuiContainer("Main bar")->registerElement("quit" , "Quit");
 		gui.getGuiContainer("Main bar")->setVisibility(true);
 
 		gui.registerContainer(0, window_height-30-300, 200, 300, "Tools");
@@ -54,7 +56,17 @@ namespace guiHandler {
 		gui.getGuiContainer("Tiles")->setIsVertical(true);
 	}
 
-	bool processGuiEvents() {
+	void toggleElement(const std::string& container, const std::string& element, bool& toggle) {
+		if (gui.getGuiContainer(container)->getElement(element)->state == highlighted){
+			gui.getGuiContainer(container)->getElement(element)->state = activated;
+			toggle = true;
+		}else{
+			gui.getGuiContainer(container)->getElement(element)->state = highlighted;
+			toggle = false;
+		}	
+	}
+
+	bool processGuiEvents(bool& draw_grid, bool& is_paused) {
 		for (auto i : gui.events) {
 			if (i.event_type == mouseOver) {
 				if (i.container == "input_handler" && i.element == "screen") {
@@ -99,11 +111,9 @@ namespace guiHandler {
 							gui.getGuiContainer("Tiles")->setVisibility(false);
 						}
 					}else if (i.element == "pause") {
-						if (gui.getGuiContainer("Main bar")->getElement("pause")->state == highlighted){
-							gui.getGuiContainer("Main bar")->getElement("pause")->state = activated;
-						}else{
-							gui.getGuiContainer("Main bar")->getElement("pause")->state = deactivated;
-						}			
+						toggleElement("Main bar", "pause", is_paused);
+					}else if (i.element == "grid") {
+						toggleElement("Main bar", "grid", draw_grid);
 					}else if (i.element == "quit") {
 						return true;
 					}else{

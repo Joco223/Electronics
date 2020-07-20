@@ -34,8 +34,10 @@ int main(int argc, char** argv) {
 
 	luaVM::initVM();
 
-	//GUI stuff
 	guiHandler::initGui(width, height);
+
+	bool draw_grid = false;
+	bool is_paused = false;
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -61,15 +63,15 @@ int main(int argc, char** argv) {
 			inputHandler::updateCamera(camera, 5, scale);
 		}
 
-		playing_field.updateChunks();
+		if (!is_paused) playing_field.updateChunks();
 
-		if (guiHandler::processGuiEvents()) return 0;
+		if (guiHandler::processGuiEvents(draw_grid, is_paused)) return 0;
 
 		window.setView(camera);
 		window.clear(sf::Color(50, 50, 50, 255));
 
 		//All the drawing goes here
-		drawer::drawPlayingField(window, camera, playing_field, width, height, scale);
+		drawer::drawPlayingField(window, camera, playing_field, width, height, scale, draw_grid);
 		//drawer::drawPlayingFieldDebug(window, camera, playing_field, width, height, scale);
 
 		window.setView(window.getDefaultView());

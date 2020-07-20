@@ -51,7 +51,7 @@ namespace drawer {
 		window.draw(chunkDebugRect);
 	}
 
-	void drawPlayingField(sf::RenderWindow& window, sf::View& camera, playingField& playing_field, const int window_width, const int window_height, const float scale) {
+	void drawPlayingField(sf::RenderWindow& window, sf::View& camera, playingField& playing_field, const int window_width, const int window_height, const float scale, const bool draw_grid) {
 		std::vector<chunk*> visibleChunks = playing_field.getVisibleChunks(camera, window_width, window_height, scale);
 
 		for (int i = 0; i < visibleChunks.size(); i++) {
@@ -59,7 +59,9 @@ namespace drawer {
 				drawTile(window, visibleChunks[i]->tiles[j], visibleChunks[i], window_width, window_height);
 			}
 
-			drawChunk(window, *visibleChunks[i], window_width, window_height);
+			if (draw_grid) {
+				drawChunk(window, *visibleChunks[i], window_width, window_height);
+			}
 		}
 	}
 
