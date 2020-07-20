@@ -7,6 +7,8 @@
 #include "playing_field.h"
 #include "chunk.h"
 #include "tile.h"
+#include "gui/gui.h"
+#include "gui/gui_container.h"
 namespace inputHandler {
 	bool scaleAlreadyUpdated = false;
 
@@ -54,44 +56,49 @@ namespace inputHandler {
 		if (pressed_keys[e] && !scaleAlreadyUpdated && scale < 2.0f)      { camera.zoom(2.0f); scale *= 2.0f; scaleAlreadyUpdated = true; }
 	}
 
-	void handleMouse(sf::RenderWindow& window, sf::View& camera, sf::Event& event, playingField* playing_field, const int window_width, const int window_height, const float scale) {
-		//if (event.mouseButton.button == 0) {
-		std::vector<chunk*> visibleChunks = playing_field->getVisibleChunks(camera, window_width, window_height, scale);
+	void handleMouse(sf::RenderWindow& window, sf::View& camera, sf::Event& event, playingField* playing_field, GUI* gui, const int window_width, const int window_height, const float scale) {
+		if (!gui->handleEvent(event)) {
+			gui->addEvent("input_handler", "screen", mouseOver);
+			if (event.type == sf::Event::MouseButtonPressed) {
+				gui->addEvent("input_handler", "screen", leftClick);
+			}
+		}else if (event.type == sf::Event::MouseButtonPressed) {
+			std::vector<chunk*> visibleChunks = playing_field->getVisibleChunks(camera, window_width, window_height, scale);
 
-		for(auto c : visibleChunks) {
-			int c_pos_x = c->pos_x*c->screen_size/scale + window_width - camera.getCenter().x;
-			int c_pos_y = c->pos_y*c->screen_size/scale + window_height - camera.getCenter().y;
-			sf::IntRect chunk_screen;
-			chunk_screen.left = c_pos_x;
-			chunk_screen.top = c_pos_y;
-			chunk_screen.height = c->screen_size/scale;
-			chunk_screen.width = c->screen_size/scale;
+			for(auto c : visibleChunks) {
+				int c_pos_x = c->pos_x*c->screen_size/scale + window_width - camera.getCenter().x;
+				int c_pos_y = c->pos_y*c->screen_size/scale + window_height - camera.getCenter().y;
+				sf::IntRect chunk_screen;
+				chunk_screen.left = c_pos_x;
+				chunk_screen.top = c_pos_y;
+				chunk_screen.height = c->screen_size/scale;
+				chunk_screen.width = c->screen_size/scale;
 
-			if (chunk_screen.contains(sf::Vector2i(event.mouseButton.x, event.mouseButton.y))) {
-				for (auto& t : c->tiles) {
-					sf::IntRect tile_screen;
-					tile_screen.left = c_pos_x + t.pos_x*24/scale;
-					tile_screen.top = c_pos_y + t.pos_y*24/scale;
-					tile_screen.width = 24/scale;
-					tile_screen.height = 24/scale;
+				if (chunk_screen.contains(sf::Vector2i(event.mouseButton.x, event.mouseButton.y))) {
+					for (auto& t : c->tiles) {
+						sf::IntRect tile_screen;
+						tile_screen.left = c_pos_x + t.pos_x*24/scale;
+						tile_screen.top = c_pos_y + t.pos_y*24/scale;
+						tile_screen.width = 24/scale;
+						tile_screen.height = 24/scale;
 
-					if (tile_screen.contains(sf::Vector2i(event.mouseButton.x, event.mouseButton.y))) {
-						if (event.mouseButton.button == 0) {
-							t.new_state = 2;
-							t.state = 2;
-						}else{
-							t.lua_path = "metal.lua";
-							t.state = 0;
-							t.new_state = 0;
-							t.type = 1;
-							t.new_type = 1;
+						if (tile_screen.contains(sf::Vector2i(event.mouseButton.x, event.mouseButton.y))) {
+							if (event.mouseButton.button == 0) {
+								t.new_state = 2;
+								t.state = 2;
+							}else{
+								t.lua_path = "metal.lua";
+								t.state = 0;
+								t.new_state = 0;
+								t.type = 1;
+								t.new_type = 1;
+							}
+							break;
 						}
-						break;
 					}
+					break;
 				}
-				break;
 			}
 		}
-		//}
 	}
 }
