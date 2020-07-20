@@ -158,16 +158,21 @@ bool guiContainer::checkEvent(std::vector<guiEvent>& gui_events, const sf::Event
 
 	sf::IntRect elementTestRect;
 
+	int pos_y = start_y;
+	int pos_x = start_x;
+
+	elementTestRect.top = pos_y;
+	elementTestRect.left = pos_x;
+	elementTestRect.height = element_height;
+
 	if (event.type != sf::Event::MouseWheelScrolled) {
 		if (containerTestRect.contains(event.mouseButton.x, event.mouseButton.y) || containerTestRect.contains(event.mouseMove.x, event.mouseMove.y)) {
 			for (int i = 0; i < gui_elements.size(); i++) {
 				if (vertical) {
-					int pos_y = start_y + element_height + i*(element_height + element_spacing) - current_scroll;
+					pos_y = start_y + element_height + i*(element_height + element_spacing) - current_scroll;
 					
 					elementTestRect.top = pos_y;
-					elementTestRect.left = start_x;
-					elementTestRect.width = width;
-					elementTestRect.height = element_height;
+					elementTestRect.width = width;	
 					
 					if (elementTestRect.contains(event.mouseButton.x, event.mouseButton.y) || elementTestRect.contains(event.mouseMove.x, event.mouseMove.y)) {
 						if (event.type == sf::Event::MouseButtonPressed) {
@@ -178,12 +183,9 @@ bool guiContainer::checkEvent(std::vector<guiEvent>& gui_events, const sf::Event
 						return true;
 					}
 				}else{
-					int pos_x = start_x + i*(element_width + element_spacing) - current_scroll;
-					elementTestRect.top = start_y;
+					pos_x = start_x + i*(element_width + element_spacing) - current_scroll;
 					elementTestRect.left = pos_x;
 					elementTestRect.width = element_width;
-					elementTestRect.height = element_height;
-
 					
 					if (elementTestRect.contains(event.mouseButton.x, event.mouseButton.y) || elementTestRect.contains(event.mouseMove.x, event.mouseMove.y)) {
 						if (event.type == sf::Event::MouseButtonPressed) {
@@ -203,21 +205,18 @@ bool guiContainer::checkEvent(std::vector<guiEvent>& gui_events, const sf::Event
 		if (containerTestRect.contains(event.mouseWheelScroll.x, event.mouseWheelScroll.y)) {
 			for (int i = 0; i < gui_elements.size(); i++) {
 				if (vertical) {
-					int pos_y = start_y + element_height + i*(element_height + element_spacing) - current_scroll;
+					pos_y = start_y + element_height + i*(element_height + element_spacing) - current_scroll;
 					elementTestRect.top = pos_y;
-					elementTestRect.left = start_x;
 					elementTestRect.width = width;
-					elementTestRect.height = element_height;
+
 					if (elementTestRect.contains(event.mouseWheelScroll.x, event.mouseWheelScroll.y)) {
 						gui_events.push_back({name, gui_elements[i].name, mouseScroll, (int)event.mouseWheelScroll.delta});
 						return true;
 					}
 				}else{
-					int pos_x = start_x + i*(element_width + element_spacing) - current_scroll;
-					elementTestRect.top = start_y;
+					pos_x = start_x + i*(element_width + element_spacing) - current_scroll;
 					elementTestRect.left = pos_x;
 					elementTestRect.width = element_width;
-					elementTestRect.height = element_height;
 
 					if (elementTestRect.contains(event.mouseWheel.x, event.mouseWheel.y)) {
 						gui_events.push_back({name, gui_elements[i].name, mouseScroll, (int)event.mouseWheelScroll.delta});
