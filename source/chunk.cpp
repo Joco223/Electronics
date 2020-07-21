@@ -8,9 +8,9 @@ chunk::chunk(const int pos_x_, const int pos_y_, const int size_)
 			  for (int y = 0; y < size; y++) {
 				  for (int x = 0; x < size; x++) {
 					  tile tmp(0, x, y);
-					  //tmp.setLuaPath("test.lua");
-
-					  tiles.emplace_back(tmp);
+						tmp.type = -1;
+						tmp.new_type = -1;
+					  tiles.push_back(tmp);
 				  }
 			  }
 		  }

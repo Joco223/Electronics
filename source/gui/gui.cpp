@@ -1,8 +1,8 @@
 #include "gui.h"
 
 void GUI::drawGUI(sf::RenderWindow& window, const guiStyle& style) {
-	for (auto& i : containers) {
-		i.drawGuiContainer(window, style);
+	for (int i = containers.size()-1; i >= 0; i--) {
+		containers[i].drawGuiContainer(window, style);
 	}
 }
 

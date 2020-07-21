@@ -10,10 +10,11 @@
 
 class playingField {
 private:
-	std::vector<chunk> chunks;
 	std::vector<std::array<chunk*, 8>> sChunksCached;
 	int width, height;
 public:
+	std::vector<chunk> chunks;
+
 	playingField() : width(0), height(0) {};
 
 	void loadPlayingField(const std::string& file_path);

@@ -32,11 +32,12 @@ guiContainer::guiContainer(const int start_x_, const int start_y_, const int wid
 						vertical(false),
 						visible(false) {}
 
-void guiContainer::registerElement(const std::string& name, const std::string& text) {
-	gui_elements.push_back({name, text});
+void guiContainer::registerElement(const std::string& name_, const std::string& text) {
+	gui_elements.push_back({name_, text});
 	current_scroll = 0;
 	if (vertical) {
-		max_scroll = (element_height + element_spacing) * gui_elements.size();
+		max_scroll = (element_height + element_spacing) * gui_elements.size() - height - element_height;
+		if (max_scroll < 0) max_scroll = 0;
 	}else{
 		max_scroll = (element_width + element_spacing) * gui_elements.size();
 	}
@@ -82,26 +83,12 @@ void guiContainer::drawGuiContainer(sf::RenderWindow& window, const guiStyle sty
 		elementRect.setOutlineColor(style.border_color);
 		
 		if (vertical) {
-			//Container title
-			containerTitleRect.setPosition(sf::Vector2f(start_x, start_y));
-			containerTitleRect.setSize(sf::Vector2f(width, element_height));
-			containerTitleRect.setFillColor(style.container_color);
-			containerTitleRect.setOutlineThickness(style.border_thickness);
-			containerTitleRect.setOutlineColor(style.border_color);
-			window.draw(containerTitleRect);
-
-			text.setString(name);
-			setCorrectTextSize(style);
-			text.setPosition(sf::Vector2f(start_x - style.padding/2 + element_width/2, start_y - style.border_thickness*2 + style.padding*2));
-			text.setFillColor(style.font_color);
-			window.draw(text);
-
 			int y_offset = element_height;
 			elementRect.setSize(sf::Vector2f(width, element_height));
 
 			for (auto element : gui_elements) {
 				int element_pos_y = start_y + y_offset - current_scroll;
-				if (element_pos_y + element_height + element_spacing > start_y && element_pos_y < start_y + height) {
+				if (element_pos_y + element_height + element_spacing > start_y + element_height && element_pos_y < start_y + height) {
 					elementRect.setPosition(sf::Vector2f(start_x, element_pos_y));
 					
 					switch (element.state) {
@@ -120,6 +107,18 @@ void guiContainer::drawGuiContainer(sf::RenderWindow& window, const guiStyle sty
 				}
 				y_offset += element_height + element_spacing;
 			}
+
+			//Container title
+			containerTitleRect.setPosition(sf::Vector2f(start_x, start_y));
+			containerTitleRect.setSize(sf::Vector2f(width, element_height));
+			containerTitleRect.setFillColor(style.background_color);
+			window.draw(containerTitleRect);
+
+			text.setString(name);
+			setCorrectTextSize(style);
+			text.setPosition(sf::Vector2f(start_x - style.padding/2 + element_width/2, start_y - style.border_thickness*2 + style.padding*2));
+			text.setFillColor(style.font_color);
+			window.draw(text);
 		}else{
 			int x_offset = 0;
 			elementRect.setSize(sf::Vector2f(element_width, element_height));
@@ -170,8 +169,8 @@ bool guiContainer::checkEvent(std::vector<guiEvent>& gui_events, const sf::Event
 		mouse_pos_x = event.mouseMove.x;
 		mouse_pos_y = event.mouseMove.y;
 	}else{
-		mouse_pos_x = event.mouseWheel.x;
-		mouse_pos_y = event.mouseWheel.y;
+		mouse_pos_x = event.mouseWheelScroll.x;
+		mouse_pos_y = event.mouseWheelScroll.y;
 	}
 
 	elementTestRect.top = pos_y;
@@ -215,29 +214,9 @@ bool guiContainer::checkEvent(std::vector<guiEvent>& gui_events, const sf::Event
 			return false;
 		}
 	}else{
-		if (containerTestRect.contains(mouse_pos_x, mouse_pos_y)) {
-			for (int i = 0; i < gui_elements.size(); i++) {
-				if (vertical) {
-					pos_y = start_y + element_height + i*(element_height + element_spacing) - current_scroll;
-					elementTestRect.top = pos_y;
-					elementTestRect.width = width;
-
-					if (elementTestRect.contains(mouse_pos_x, mouse_pos_y)) {
-						gui_events.push_back({name, gui_elements[i].name, mouseScroll, (int)event.mouseWheelScroll.delta});
-						return true;
-					}
-				}else{
-					pos_x = start_x + i*(element_width + element_spacing) - current_scroll;
-					elementTestRect.left = pos_x;
-					elementTestRect.width = element_width;
-
-					if (elementTestRect.contains(mouse_pos_x, mouse_pos_y)) {
-						gui_events.push_back({name, gui_elements[i].name, mouseScroll, (int)event.mouseWheelScroll.delta});
-						return true;
-					}
-				}
-			}
-			return false;
+		if (containerTestRect.contains(mouse_pos_x, mouse_pos_y)) {	
+			gui_events.push_back({name, "", mouseScroll, (int)event.mouseWheelScroll.delta*-8});
+			return true;
 		}else{
 			return false;
 		}

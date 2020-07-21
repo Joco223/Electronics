@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
 	sf::RenderWindow window(sf::VideoMode(width, height), "Electronics", sf::Style::Close, settings);
 	window.setFramerateLimit(60);
 	sf::View camera = window.getDefaultView();
+	camera.move(width/4, height/2);
 
 	bool keyWasUpdated = false;
 
@@ -38,6 +39,12 @@ int main(int argc, char** argv) {
 
 	bool draw_grid = false;
 	bool is_paused = false;
+
+	gameHandler::addTileType("metal", "metal.lua");
+	gameHandler::addTileType("stone", "stone.lua");
+	gameHandler::addTileType("dirt" , "dirt.lua");
+	gameHandler::addTileType("water", "water.lua");
+	gameHandler::addTileType("spark", "");
 
 	while (window.isOpen()) {
 		sf::Event event;
@@ -79,11 +86,11 @@ int main(int argc, char** argv) {
 
 		window.display();
 
-		if (frameCounter == 100) {
+		if (frameCounter == 500) {
 			auto end = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 			start = std::chrono::high_resolution_clock::now();
-			std::cout << round(1000.0/(duration.count()/100.0)) << " FPS on average.\n";
+			std::cout << (duration.count()/500.0) << " ms on average.\n";
 			frameCounter = 0;
 		}else{
 			frameCounter++;

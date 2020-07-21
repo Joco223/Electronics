@@ -9,6 +9,7 @@
 #include "tile.h"
 #include "gui/gui.h"
 #include "gui/gui_container.h"
+#include "game_handler.h"
 namespace inputHandler {
 	bool scaleAlreadyUpdated = false;
 
@@ -64,34 +65,26 @@ namespace inputHandler {
 
 				std::vector<chunk*> visibleChunks = playing_field->getVisibleChunks(camera, window_width, window_height, scale);
 
-				for(auto c : visibleChunks) {
-					int c_pos_x = c->pos_x*c->screen_size/scale + window_width - camera.getCenter().x;
-					int c_pos_y = c->pos_y*c->screen_size/scale + window_height - camera.getCenter().y;
+				for(auto c : visibleChunks) {	
+					sf::Vector2f chunk_pos = sf::Vector2f(c->pos_x*c->screen_size + window_width/2, c->pos_y*c->screen_size + window_height/2);
+					sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y), camera);
 					sf::IntRect chunk_screen;
-					chunk_screen.left = c_pos_x;
-					chunk_screen.top = c_pos_y;
-					chunk_screen.height = c->screen_size/scale;
-					chunk_screen.width = c->screen_size/scale;
+					chunk_screen.left = chunk_pos.x;
+					chunk_screen.top = chunk_pos.y;
+					chunk_screen.height = c->screen_size;
+					chunk_screen.width = c->screen_size;
 
-					if (chunk_screen.contains(sf::Vector2i(event.mouseButton.x, event.mouseButton.y))) {
+					if (chunk_screen.contains(sf::Vector2i(mouse_pos.x, mouse_pos.y))) {
 						for (auto& t : c->tiles) {
 							sf::IntRect tile_screen;
-							tile_screen.left = c_pos_x + t.pos_x*24/scale;
-							tile_screen.top = c_pos_y + t.pos_y*24/scale;
-							tile_screen.width = 24/scale;
-							tile_screen.height = 24/scale;
+							tile_screen.left = chunk_pos.x + t.pos_x*24;
+							tile_screen.top = chunk_pos.y + t.pos_y*24;
+							tile_screen.width = 24;
+							tile_screen.height = 24;
 
-							if (tile_screen.contains(sf::Vector2i(event.mouseButton.x, event.mouseButton.y))) {
-								if (event.mouseButton.button == 0) {
-									t.new_state = 2;
-									t.state = 2;
-								}else{
-									t.lua_path = "metal.lua";
-									t.state = 0;
-									t.new_state = 0;
-									t.type = 1;
-									t.new_type = 1;
-								}
+							if (tile_screen.contains(sf::Vector2i(mouse_pos.x, mouse_pos.y))) {
+								
+								gameHandler::handleClick(event.mouseButton.button, t);
 								break;
 							}
 						}

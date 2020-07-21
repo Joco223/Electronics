@@ -77,7 +77,11 @@ namespace drawer {
 		sf::Vector2f position(c->pos_x*c->screen_size + t.pos_x*tile_pixel_size + window_width/2,
 													c->pos_y*c->screen_size + t.pos_y*tile_pixel_size + window_height/2);
 
-		tileRect.setFillColor(t.color);
+		if (t.type != -1) {
+			tileRect.setFillColor(t.color);
+		}else{
+			tileRect.setFillColor(sf::Color(0, 0, 0, 255));
+		}	
 		tileRect.setPosition(position);
 		window.draw(tileRect);
 	}
