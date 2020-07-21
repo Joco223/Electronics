@@ -6,6 +6,7 @@
 #include "playing_field.h"
 #include "drawer.h"
 #include "lua_vm.h"
+#include "tile.h"
 
 #include "gui/gui_handler.h"
 
@@ -40,11 +41,12 @@ int main(int argc, char** argv) {
 	bool draw_grid = false;
 	bool is_paused = false;
 
-	gameHandler::addTileType("metal", "metal.lua");
-	gameHandler::addTileType("stone", "stone.lua");
-	gameHandler::addTileType("dirt" , "dirt.lua");
-	gameHandler::addTileType("water", "water.lua");
-	gameHandler::addTileType("spark", "");
+	gameHandler::addTileType("metal", "metal.lua", solid);
+	gameHandler::addTileType("stone", "stone.lua", solid);
+	gameHandler::addTileType("dirt" , "dirt.lua", wet_solid);
+	gameHandler::addTileType("water", "water.lua", liquid);
+	gameHandler::addTileType("sand", "sand.lua", dust);
+	gameHandler::addTileType("spark", "", solid);
 
 	while (window.isOpen()) {
 		sf::Event event;

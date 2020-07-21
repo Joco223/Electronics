@@ -6,6 +6,8 @@
 
 #include "tile.h"
 #include "lua_vm.h"
+#include "tile_physics.h"
+
 class chunk {
 private:
 	std::vector<std::array<tile*, 8>> sTilesCached;
@@ -17,5 +19,6 @@ public:
 	chunk(const int pos_x_, const int pos_y_, const int size_);
 
 	void generateSTilesCached(std::array<chunk*, 8>& sChunks);
-	void updateTiles(std::array<chunk*, 8>& surroundingChunks);
+	void updateTiles(std::array<chunk*, 8>& sChunks);
+	void updateTilePhysics(std::array<chunk*, 8>& sChunks);
 };

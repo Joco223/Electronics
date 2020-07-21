@@ -142,3 +142,11 @@ void chunk::updateTiles(std::array<chunk*, 8>& sChunks) {
 		}
 	}
 }
+
+void chunk::updateTilePhysics(std::array<chunk*, 8>& sChunks) {
+	for (int y = 0; y < size; y++) {
+		for (int x = 0; x < size; x++) {
+			tilePhysics::updateTilePhysics(tiles[x + y * size], sTilesCached[x + y * size]);
+		}
+	}
+}

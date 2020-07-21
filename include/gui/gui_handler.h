@@ -56,6 +56,7 @@ namespace guiHandler {
 		gui.getGuiContainer("Tiles")->registerElement("stone", "Stone");
 		gui.getGuiContainer("Tiles")->registerElement("dirt" , "Dirt");
 		gui.getGuiContainer("Tiles")->registerElement("water", "Water");
+		gui.getGuiContainer("Tiles")->registerElement("sand" , "Sand");
 	}
 
 	void toggleElement(const std::string& container, const std::string& element, bool& toggle) {
