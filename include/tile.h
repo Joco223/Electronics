@@ -15,7 +15,7 @@ enum physicsStates {
 
 class tile {
 public:
-	sf::Color color;
+	sf::Color color, new_color;
 	std::string lua_path;
 	int type, heat, state;
 	int new_type, new_heat, new_state, pos_x, pos_y;

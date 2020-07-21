@@ -20,5 +20,7 @@ public:
 
 	void generateSTilesCached(std::array<chunk*, 8>& sChunks);
 	void updateTiles(std::array<chunk*, 8>& sChunks);
-	void updateTilePhysics(std::array<chunk*, 8>& sChunks);
+	void updateTilePhysicsWetSolids(std::array<chunk*, 8>& sChunks);
+	void updateTilePhysicsDusts(std::array<chunk*, 8>& sChunks);
+	void updateTilePhysicsLiquids(std::array<chunk*, 8>& sChunks);
 };

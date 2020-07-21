@@ -93,7 +93,7 @@ namespace luaVM {
 
 			L.script(loadedFiles[t.lua_index]);
 			loadArguments(sTiles);
-			sol::tie(t.new_state, t.new_heat, t.color.r, t.color.g, t.color.b) = L["Run"](states, heats, types, t.state, t.heat, t.color.r, t.color.g, t.color.b);
+			sol::tie(t.new_state, t.new_heat, t.new_color.r, t.new_color.g, t.new_color.b) = L["Run"](states, heats, types, t.state, t.heat, t.color.r, t.color.g, t.color.b);
 		}
 	}
 }

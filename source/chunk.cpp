@@ -143,10 +143,26 @@ void chunk::updateTiles(std::array<chunk*, 8>& sChunks) {
 	}
 }
 
-void chunk::updateTilePhysics(std::array<chunk*, 8>& sChunks) {
+void chunk::updateTilePhysicsWetSolids(std::array<chunk*, 8>& sChunks) {
 	for (int y = 0; y < size; y++) {
 		for (int x = 0; x < size; x++) {
-			tilePhysics::updateTilePhysics(tiles[x + y * size], sTilesCached[x + y * size]);
+			tilePhysics::updateTilePhysicsWetSolids(tiles[x + y * size], sTilesCached[x + y * size]);
+		}
+	}
+}
+
+void chunk::updateTilePhysicsDusts(std::array<chunk*, 8>& sChunks) {
+	for (int y = 0; y < size; y++) {
+		for (int x = 0; x < size; x++) {
+			tilePhysics::updateTilePhysicsDusts(tiles[x + y * size], sTilesCached[x + y * size]);
+		}
+	}
+}
+
+void chunk::updateTilePhysicsLiquids(std::array<chunk*, 8>& sChunks) {
+	for (int y = 0; y < size; y++) {
+		for (int x = 0; x < size; x++) {
+			tilePhysics::updateTilePhysicsLiquids(tiles[x + y * size], sTilesCached[x + y * size]);
 		}
 	}
 }

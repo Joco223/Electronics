@@ -120,7 +120,31 @@ void playingField::updateChunks() {
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			chunks[x + y * width].updateTilePhysics(sChunksCached[x + y * width]);
+			chunks[x + y * width].updateTilePhysicsWetSolids(sChunksCached[x + y * width]);
+		}
+	}
+
+	for (int i = 0; i < chunks.size(); i++) {
+		for (int j = 0; j < chunks[i].tiles.size(); j++) {
+			chunks[i].tiles[j].lateUpdateTile();
+		}
+	}
+
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			chunks[x + y * width].updateTilePhysicsDusts(sChunksCached[x + y * width]);
+		}
+	}
+
+	for (int i = 0; i < chunks.size(); i++) {
+		for (int j = 0; j < chunks[i].tiles.size(); j++) {
+			chunks[i].tiles[j].lateUpdateTile();
+		}
+	}
+
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			chunks[x + y * width].updateTilePhysicsLiquids(sChunksCached[x + y * width]);
 		}
 	}
 
